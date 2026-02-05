@@ -7,6 +7,8 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
+    on:
+      pull_request:
     defaults:
       run:
         working-directory: labs/40-containerized-node-app
