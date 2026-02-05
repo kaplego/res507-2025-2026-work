@@ -5,9 +5,22 @@ on:
   pull_request:
 
 jobs:
+  label-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Verify PR has required labels
+      run: |
+        labels='${{ toJson(github.event.pull_request.labels.*.name) }}'
+        if echo "$labels" | grep -qE '(bug|feature|documentation|chore)'; then
+          echo "Required label found"
+        else
+          echo "PR must have one of: bug, feature, documentation, chore"
+          exit 1
+        fi
+
   checks:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: labs/40-containerized-node-app
