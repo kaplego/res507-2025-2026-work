@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  checks:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -25,7 +25,16 @@ jobs:
 
     - name: Run tests if present
       working-directory: labs/40-containerized-node-app/app
-      run: npm test --if-present
+      run: npm test -- --if-present
+
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: labs/40-containerized-node-app
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
 
     - name: Build Docker image
       run: docker build -t quote-app -f docker/Dockerfile .
