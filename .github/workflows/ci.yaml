@@ -3,6 +3,7 @@ name: CI
 on:
   push:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
 
 jobs:
   label-check:
@@ -21,6 +22,7 @@ jobs:
 
   checks:
     runs-on: ubuntu-latest
+    if: github.event.action != 'labeled'
     defaults:
       run:
         working-directory: labs/40-containerized-node-app
@@ -44,6 +46,7 @@ jobs:
   build:
     needs: checks
     runs-on: ubuntu-latest
+    if: github.event.action != 'labeled'
     defaults:
       run:
         working-directory: labs/40-containerized-node-app
