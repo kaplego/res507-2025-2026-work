@@ -7,8 +7,7 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    on:
-      pull_request:
+    if: github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: labs/40-containerized-node-app
