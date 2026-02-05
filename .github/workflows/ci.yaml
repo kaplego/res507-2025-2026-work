@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: labs/40-containerized-node-app
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
@@ -17,11 +20,11 @@ jobs:
         node-version: "24"
 
     - name: Install dependencies
-      working-directory: app
+      working-directory: labs/40-containerized-node-app/app
       run: npm ci
 
     - name: Run tests if present
-      working-directory: app
+      working-directory: labs/40-containerized-node-app/app
       run: npm test --if-present
 
     - name: Build Docker image
