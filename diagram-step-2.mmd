@@ -1,0 +1,26 @@
+flowchart TB
+    subgraph external["External"]
+        User["Browser"]
+    end
+    
+    subgraph cluster["Cluster"]
+        AppService["Service (LoadBalancer)"]
+
+        
+        subgraph app_workloads["Deployment"]
+            Pod1["Pod 1"]
+            Pod2["Pod 2"]
+            Pod3["Pod 3"]
+        end
+
+        DBService["Database"]
+    end
+
+    User -->|"HTTP/HTTPS"| AppService
+    AppService -->|"load balances"| Pod1
+    AppService -->|"load balances"| Pod2
+    AppService -->|"load balances"| Pod3
+    
+    Pod1 --> DBService
+    Pod2 --> DBService
+    Pod3 --> DBService

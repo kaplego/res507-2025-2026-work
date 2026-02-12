@@ -18,14 +18,25 @@ export async function buildApp() {
     root: new URL("./views/", import.meta.url).pathname
   });
 
+  let healthy = true;
+
   // Health check endpoint
-  app.get("/health", async () => ({ ok: true }));
+  app.get("/health", async () => {
+    if (healthy)
+      res.status(200).send({ ok: true });
+    else
+      res.status(500).send({ ok: false });
+  });
 
   // Get all quotes endpoint
   app.get("/", async (_req, reply) => {
+    if (!healthy) {
+      res.status(500).send({ ok: false });
+      return;
+    }
     /******* TODO SELECT quotes from DB ******/
-    // const result = await app.pg.query('SELECT * FROM quotes')
-    // const quotes = result.rows;
+    //const result = await app.pg.query('SELECT * FROM quotes')
+    //const quotes = result.rows;
 
     // Placeholder test quotes
     const quotes = [{text: "quote 1", author: "author 1"}, {text: "quote 2", author: "author 2"}]; 
@@ -43,12 +54,22 @@ export async function buildApp() {
     }
 
     /******* TODO INSERT quote into DB ******/
-    // await app.pg.query('INSERT INTO quotes (author, text) VALUES ($1, $2)', [author || "anonymous", text]);
+    //await app.pg.query('INSERT INTO quotes (author, text) VALUES ($1, $2)', [author || "anonymous", text]);
 
     app.log.info({quote: { author: author || "anonymous", text }}, 'New quote added');
 
     return reply.redirect("/");
   });
-  
+
+  app.post('/break', (req, res) => {
+    healthy = false;
+    res.send('App is now broken');
+  });
+
+  app.post('/fix', (req, res) => {
+    healthy = true;
+    res.send('App is fixed');
+  });
+
   return app;
 };
