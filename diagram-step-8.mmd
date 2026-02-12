@@ -1,0 +1,49 @@
+flowchart TB
+    subgraph CI/CD
+        GIT[GitLab/GitHub] --> RUNNER[CI Runner]
+        RUNNER --> REGISTRY[Container Registry]
+    end
+
+    subgraph K3S Cluster
+        subgraph Control
+            LB[Traefik Ingress]
+        end
+
+        subgraph Nodes
+            N1[Node 1]
+            N2[Node 2]
+            N3[Node 3]
+        end
+
+        subgraph App
+            D1[quote-app]
+            D2[quote-app]
+            D3[quote-app]
+        end
+
+        subgraph Data
+            PG[(PostgreSQL)]
+            PVC[PersistentVolume<br/>Longhorn]
+        end
+
+        subgraph Observability
+            PROM[Prometheus]
+            GRAF[Grafana]
+            LOKI[Loki]
+        end
+    end
+
+    subgraph Backup
+        VELERO[Velero] --> S3[S3/MinIO]
+        PGDUMP[pg_dump CronJob] --> S3
+    end
+
+    USER([Users]) --> LB
+    LB --> D1 & D2 & D3
+    D1 & D2 & D3 --> PG
+    PG --> PVC
+    REGISTRY --> Nodes
+    
+    D1 & D2 & D3 -.->|metrics| PROM
+    D1 & D2 & D3 -.->|logs| LOKI
+    PROM & LOKI --> GRAF

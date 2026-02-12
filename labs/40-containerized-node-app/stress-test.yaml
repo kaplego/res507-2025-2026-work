@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-stress
+spec:
+  containers:
+    - name: stress
+      image: quote-app:local
+      command: ["node", "-e"]
+      args:
+        - |
+          const chunks = [];
+          const interval = setInterval(() => {
+            const buf = Buffer.alloc(5 * 1024 * 1024, 'x');
+            chunks.push(buf);
+            const totalMB = chunks.length * 5;
+            console.log('Holding: ' + totalMB + ' MB in ' + chunks.length + ' chunks');
+          }, 200);
+      resources:
+        requests:
+          memory: 32Mi
+        limits:
+          memory: 64Mi
+  restartPolicy: Never
