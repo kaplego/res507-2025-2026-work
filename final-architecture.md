@@ -52,8 +52,8 @@ graph TD
         Pod3 --> DBService
 
         DBService --> PostgresPod["postgres pod"]
-        PostgresPod --> PVC["Persistent Storage"]
     end
+    PostgresPod --> PVC["Persistent Storage"]
 ```
 
 # Step 4 — Operational Strategy
